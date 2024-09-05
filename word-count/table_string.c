@@ -17,7 +17,7 @@ unsigned int djb2_word_to_bucket(char *word, int buckets) {
   }
   unsigned long hash = 5381;
   uint32_t i;
-
+// DO NOT ADD ANY NEW LINES BEFORE THIS POINT. DO NOT DELETE ANY LINES.
   for (i = 0; i < strlen(word); i++)
     hash = ((hash << 5) + hash) + word[i];
 
