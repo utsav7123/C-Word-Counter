@@ -56,6 +56,39 @@ int main(int argc, char **argv) {
   // 3. if current character terminates word. print and restart word start
   // check. Free all data.
   // Hint: Use vector_char
+  vector_char_t *current_word = vector_char_allocate(); // Allocate a vector for the current word
+
+  // Iterate through the source string
+  for (size_t i = 0; source[i] != '\0'; i++) {
+    char c = source[i];
+
+    if (isalnum(c)) {
+      // If it's an alphanumeric character, accumulate it in the vector
+      vector_char_add(current_word, c);
+    } else {
+      // If it's not an alphanumeric character, process the current word
+      if (current_word->len > 0) {
+        // Null-terminate the current word (so it can be printed)
+        vector_char_add(current_word, '\0');
+        
+        // Print the current word
+        printf("%s\n", vector_char_get_array(current_word));
+
+        // Reset the vector for the next word
+        current_word->len = 0;
+      }
+    }
+  }
+
+  // If the file ends and we still have an accumulated word, print it
+  if (current_word->len > 0) {
+    vector_char_add(current_word, '\0');
+    printf("%s\n", vector_char_get_array(current_word));
+  }
+
+  // Free the allocated memory
+  vector_char_delete(current_word);
+  free(source);
 
   return 0;
 }

@@ -15,4 +15,21 @@ int my_str_cmp(const char *s1, const char *s2) {
   // Value to be returned will be 1.
   // You cannot use any of the string helper functions including strlen and
   // strncmp, strcmp.
+
+  int i=0;
+
+  while( s1[i]!= '\0' && s2[i]!= '\0')
+  {
+      if(s1[i]!= s2[i])
+      {
+        return 1;
+      }
+      i++;
+  }
+
+  if (s1[i]== '\0' && s2[i]== '\0')
+    return 0;
+
+    return 1;
+    
 }

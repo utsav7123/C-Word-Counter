@@ -63,5 +63,34 @@ int main(int argc, char **argv) {
   /** Create Table string 2 with file in argv[2] */
   /** Subtract words between ts1 and ts2 */
   /** Deallocate **/
-  return 0;
+  table_string *t1 = table_string_allocate(8); // Assuming 8 buckets
+    table_string *t2 = table_string_allocate(8);
+
+    // Process source1 and insert words into t1
+    char *word = strtok(source1, " \n\t\r");
+    int line_num = 1;
+    while (word != NULL) {
+        table_string_insert_or_add(t1, word, line_num);
+        word = strtok(NULL, " \n\t\r");
+    }
+
+    // Process source2 and insert words into t2
+    word = strtok(source2, " \n\t\r");
+    line_num = 1;
+    while (word != NULL) {
+        table_string_insert_or_add(t2, word, line_num);
+        word = strtok(NULL, " \n\t\r");
+    }
+
+    // Call the subtract function
+    subtract(t1, argv[1], t2);
+
+    // Deallocate resources
+    table_string_deallocate(t1);
+    table_string_deallocate(t2);
+    free(source1);
+    free(source2);
+
+    return 0;
+
 }

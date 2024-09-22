@@ -48,5 +48,43 @@ int main(int argc, char **argv) {
 
   /** Start processing file and separate into words */
   // TODO: Write linecount
+  table_string *ts = table_string_allocate(8);
+
+// Track line number
+int line_number = 1;
+char *token;
+char *rest = source;
+
+while (*rest != '\0') {
+    // Process each line
+    char *line = rest;
+
+    // Find the next newline character
+    char *newline = strchr(line, '\n');
+    if (newline != NULL) {
+        *newline = '\0';  // Temporarily terminate the string here
+        rest = newline + 1;
+    } else {
+        rest += strlen(rest);  // End of the file
+    }
+
+    // Tokenize the line into words
+    token = strtok(line, " ,.:;?!\n\t");  // Separate by space, punctuation
+    while (token != NULL) {
+        // Insert each word with its line number into the table string
+        table_string_insert_or_add(ts, token, line_number);
+        token = strtok(NULL, " ,.:;?!\n\t");
+    }
+
+    // Increment line number
+    line_number++;
+}
+
+// After processing, print the results and deallocate memory
+table_string_print(ts);
+table_string_deallocate(ts);
+
+// Free the source file content
+free(source);
   return 0;
 }

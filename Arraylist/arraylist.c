@@ -14,8 +14,17 @@
  */
 void arraylist_add(arraylist *a, void *x)
 {
-    // TODO
+    if( a-> length == a->buffer_size)
+    {
+        a->buffer_size *=2;
+        a->buffer = realloc(a->buffer, a->buffer_size*sizeof(void*));
+        assert(a->buffer != NULL);
+    
+    }
+    a->buffer[a->length]=x;
+    a->length++;
 }
+
 
 /*
  * Store x at the specified index of the arraylist. Previously stored values
@@ -24,19 +33,29 @@ void arraylist_add(arraylist *a, void *x)
  */
 void arraylist_insert(arraylist *a, unsigned int index, void *x)
 {
-    // TODO
-    // Hint: Consider how you could implement this function in terms of
-    // arraylist_add()
+    assert(index <= a->length);
+    
+    if(a -> length == a ->buffer_size)
+    {
+        arraylist_add(a,x);
+        --a->length;
+    }
+    memmove(&a -> buffer [index +1 ], &a->buffer[index], (a-> length - index)* sizeof(void*));
+
+    a->buffer[index]=x;
+    a->length++;
 }
+
 
 /*
  * Free any memory used by that arraylist.
  */
 void arraylist_free(arraylist *a)
-{
-    // Hint: How many times is malloc called when creating a new arraylist?
-    // TODO
+{   if (a!= NULL)
+    free(a->buffer);
+    free(a);
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////
 

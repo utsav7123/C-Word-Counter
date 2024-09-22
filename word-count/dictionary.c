@@ -7,6 +7,7 @@
 #include <vector_string.h>
 int main(int argc, char **argv) {
   char *source = NULL;
+  //long bufsize;
 
   if (argc != 2) {
     printf("./grade_tokenize.bin [FILE PATH]");
@@ -46,7 +47,41 @@ int main(int argc, char **argv) {
   }
   fclose(fp);
 
-  // TODO: Process source[] and count the number of words
-  // Print the number of words in the end.
-  return 0;
+    vector_string *vs = vector_string_allocate();
+
+    vector_char_t *current_word = vector_char_allocate();
+
+    for (int i = 0; source[i] != '\0'; i++) {
+        char c = source[i];
+
+        if (isalnum(c)) {
+            vector_char_add(current_word, c);
+        } else if (current_word->len > 0) {
+            vector_char_add(current_word, '\0');
+
+            char *word = vector_char_get_array(current_word);
+
+            if (!vector_string_find(vs, word)) {
+                vector_string_insert(vs, word);
+            }
+
+            current_word->len = 0;
+        }
+    }
+
+    if (current_word->len > 0) {
+        vector_char_add(current_word, '\0');
+        char *word = vector_char_get_array(current_word);
+        if (!vector_string_find(vs, word)) {
+            vector_string_insert(vs, word);
+        }
+    }
+
+    vector_string_print(vs);
+
+    vector_string_deallocate(vs);
+    vector_char_delete(current_word);
+    free(source);
+
+    return 0;
 }

@@ -14,47 +14,60 @@
  * into it.
  *
  */
-vector_string *vector_string_allocate() {}
-
-/**
- * @brief Search the vector string pointed to by vs and return true if the
- * vs_entry.value == key, else return false.
- * TODO:
- * @param vs - Pointer to vector_string datastructure
- * @param key - Pointer to string to search for
- * @return * Find*
- */
-bool vector_string_find(vector_string *vs, char *key) { return true; }
-
-/**
- * @brief TODO: Insert the string pointed to by key into the vector string.
- *  char* is externally allocated. You do not have to allocate internally
- *
- * @param vs - Pointer to vector_string datastructure
- * @param key - Pointer to string to search for
- * @return * Find*
- */
-void vector_string_insert(vector_string *vs, char *key) {
-  // Insert the string into the tail of the list.
+vector_string *vector_string_allocate()
+{
+    vector_string *vs = (vector_string *)malloc(sizeof(vector_string));
+    if (vs != NULL) {
+        vs->head = NULL;
+        vs->tail = NULL;
+    }
+    return vs;
 }
-/**
- * @brief Remove all entries and cleanup vector string
- * TODO: Remove all entries. Remember head and tail are pointers.
- * Remember to remove vs as well; not just entries. or you will have memory
- * leaks.
- * @param vs: Pointer to vector_string struct
- */
-void vector_string_deallocate(vector_string *vs) {}
+bool vector_string_find(vector_string *vs, char *key)
+{
 
-/**
- * @brief Print all value in each entry of the vector string, in the following
- * format. In this case hello and world are the unique words in the file.
- * 1. hello
- * 2. world
- * @param vs
- */
+    vs_entry_t *current = vs->head;
+    while (current != NULL) {
+        if (strcmp(current->value, key) == 0) {
+            return true;
+        }
+        current = current->next;
+    }
+    return false;
+}
+void vector_string_insert(vector_string *vs, char *key) {
+ 
+vs_entry_t *new_entry = (vs_entry_t *)malloc(sizeof(vs_entry_t));
+    if (!new_entry) {
+        printf("Memory allocation failed for new entry\n");
+        exit(1);
+    }
+    new_entry->value = strdup(key);
+    new_entry->next = NULL;
+
+    if (vs->tail) {
+        vs->tail->next = new_entry;
+    } else {
+        vs->head = new_entry;
+    }
+    vs->tail = new_entry;
+}
+void vector_string_deallocate(vector_string *vs) {
+    vs_entry_t *current = vs->head;
+    while (current) {
+        vs_entry_t *temp = current;
+        current = current->next;
+        free(temp->value);
+        free(temp);
+    }
+    free(vs);
+}
 void vector_string_print(vector_string *vs) {
 
-  vs_entry_t *entry;
-  //printf("%d. %s\n", count, entry->value);
+  int count = 1;
+    vs_entry_t *current = vs->head;
+    while (current != NULL) {
+        printf("%d. %s\n", count++, current->value);
+        current = current->next;
+    }
 }

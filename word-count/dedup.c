@@ -47,3 +47,42 @@ void unique(table_string *ts1, char *file1, table_string *ts2, char *file2) {
     // entry[i].lines1[j]); printf("\n%s", file2); printf("%d,",
     // entry[i].lines2[j]);}
  }
+
+void subtract(table_string *t1, char *f1, table_string *t2) {
+    printf("\n");
+    for (int i = 0; i < t1->buckets; i++) {
+        vs_entry_t *entry_t1 = t1->heads[i];
+        while (entry_t1 != NULL) {
+            // Check if this word exists in t2
+            int found_in_t2 = 0;
+            int bucket_t2 = djb2_word_to_bucket(entry_t1->value, t2->buckets);
+            vs_entry_t *entry_t2 = t2->heads[bucket_t2];
+            
+            // Search for the word in t2's bucket
+            while (entry_t2 != NULL) {
+                if (custom_Strcmp(entry_t1->value, entry_t2->value) == 0) {
+                    found_in_t2 = 1;
+                    break;
+                }
+                entry_t2 = entry_t2->next;
+            }
+
+            // If not found in t2, print the word and its line numbers from t1
+            if (!found_in_t2) {
+    printf("%s\n", entry_t1->value);  // Print the word
+    printf("%s ", f1);  // Print the filename
+    for (int j = 0; j < entry_t1->line_count; j++) {
+        printf("%d", entry_t1->lines[j]);  // Print line numbers
+        if (j < entry_t1->line_count - 1) {
+            printf(",");  // Add comma between line numbers
+        }
+    }
+    printf(",\n");  // Newline after each entry
+}
+
+            entry_t1 = entry_t1->next;
+        }
+    }
+}
+
+

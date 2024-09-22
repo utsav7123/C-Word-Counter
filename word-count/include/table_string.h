@@ -1,6 +1,7 @@
 #ifndef table_string_H
 #define table_string_H
-#define LINE_COUNT
+//#define LINE_COUNT
+
 
 #include "vector_string.h"
 #include <stdbool.h>
@@ -49,4 +50,7 @@ void table_string_deallocate(table_string *vs);
  * @param vs
  */
 void table_string_print(table_string *vs);
+
+int custom_strcmp(const char *s1, const char *s2);
+void bubble_sort_entries(vs_entry_t **entries, int entry_count);
 #endif

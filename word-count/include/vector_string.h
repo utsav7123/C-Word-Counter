@@ -45,6 +45,7 @@ typedef struct vs_entry {
 #ifdef LINE_COUNT
   int* lines; // This keeps track of each line the word is found in
   int  size_of_lines; // This keeps size of lines. Remember in C we track array size explicitly.
+  int line_count;
 #endif
 } vs_entry_t;
 
