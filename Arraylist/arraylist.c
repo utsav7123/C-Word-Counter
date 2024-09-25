@@ -49,7 +49,7 @@ void arraylist_free(arraylist *a)
     // Hint: How many times is malloc called when creating a new arraylist?
     // TODO
     free(a->buffer);
-    free(a);cd Arraylist
+    free(a);
 }
 
 
