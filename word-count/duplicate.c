@@ -45,8 +45,30 @@ int main(int argc, char **argv) {
     }
   }
   fclose(fp);
+  return source;
+}
 
-  // TODO: Process source[] and count the number of words
-  // Print the number of words in the end.
+int main(int argc, char **argv) {
+  char *source = NULL;
+
+  if (argc != 3) {
+    printf("./dedup.bin [FILE PATH1] [FILE PATH2]");
+    exit(1);
+  }
+  char *source1 = readfile(argv[1]);
+  char *source2 = readfile(argv[2]);
+  /**
+   * @brief Read file into source.
+   * source is a character array with file contents
+   * It is null terminated
+   */
+
+  // argv[1] name of file1
+  // argv[2] name of file2
+  /** Start processing file and separate into words */
+  /** Create Table String 1 with file in argv[1] */
+  /** Create Table string 2 with file in argv[2] */
+  /** Subtract words between ts1 and ts2 */
+  /** Deallocate **/
   return 0;
 }

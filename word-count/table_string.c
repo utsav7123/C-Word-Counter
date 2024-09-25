@@ -17,7 +17,7 @@ unsigned int djb2_word_to_bucket(char *word, int buckets) {
   }
   unsigned long hash = 5381;
   uint32_t i;
-
+// DO NOT ADD ANY NEW LINES BEFORE THIS POINT. DO NOT DELETE ANY LINES.
   for (i = 0; i < strlen(word); i++)
     hash = ((hash << 5) + hash) + word[i];
 
@@ -47,6 +47,58 @@ char *myStrdup(const char *s) {
  * @param buckets
  * @return table_string*
  */
+void add_line(vs_entry_t *entry, int line) {
+    if (entry->line_count >= entry->size_of_lines) {
+        entry->size_of_lines *= 2;
+        entry->lines = (int *)realloc(entry->lines, entry->size_of_lines * sizeof(int));
+        if (!entry->lines) {
+            fprintf(stderr, "Memory allocation failed for lines array\n");
+            exit(EXIT_FAILURE);
+        }
+    }
+    entry->lines[entry->line_count++] = line;
+}
+#include <stdio.h>
+#include <stdlib.h>
+
+int custom_strcmp(const char *s1, const char *s2) {
+    while (*s1 && *s2) {
+        if (*s1 < *s2) return -1; // s1 is less than s2
+        if (*s1 > *s2) return 1;  // s1 is greater than s2
+        s1++;
+        s2++;
+    }
+    // If one string ends before the other
+    return (*s1 == '\0' && *s2 == '\0') ? 0 : (*s1 == '\0' ? -1 : 1);
+}
+
+
+
+
+
+
+
+
+
+
+void bubble_sort_entries(vs_entry_t **entries, int entry_count) {
+    for (int i = 0; i < entry_count - 1; i++) {
+        for (int j = 0; j < entry_count - i - 1; j++) {
+            if (custom_strcmp(entries[j]->value, entries[j + 1]->value) > 0) {
+                // Swap if out of order
+                vs_entry_t *temp = entries[j];
+                entries[j] = entries[j + 1];
+                entries[j + 1] = temp;
+            }
+        }
+    }
+}
+
+
+
+
+
+
 table_string *table_string_allocate(unsigned int buckets) {
   table_string *ts = malloc(sizeof(table_string));
     if (!ts) {
@@ -65,6 +117,10 @@ table_string *table_string_allocate(unsigned int buckets) {
     ts->buckets = buckets;
     return ts;
   // Instantiate a bucket number of heads
+  table_string *ts = (table_string *)malloc(sizeof(table_string));
+    ts->heads = (vs_entry_t **)calloc(buckets, sizeof(vs_entry_t *));
+    ts->buckets = buckets;
+    return ts;
 }
 
 /**
@@ -90,42 +146,6 @@ void table_string_insert_or_add(table_string *ts, char *word, int line) {
   // Find the bucket for word. djb2 will return a value between 0-buckets-1.
   // Rule: buckets can only be power of 2.
   int bucket = djb2_word_to_bucket(word, ts->buckets);
-    vs_entry_t *current = ts->heads[bucket];
-    vs_entry_t *prev = NULL;
-
-    // Traverse the linked list to find if the word exists
-    while (current != NULL) {
-        if (myStrCmp(current->value, word) == 0) {
-            // Word found, add the line number to the lines array
-            current->lines = realloc(current->lines, (current->size_of_lines + 1) * sizeof(int));
-            if (!current->lines) {
-                perror("Unable to allocate memory for line numbers");
-                exit(EXIT_FAILURE);
-            }
-            current->lines[current->size_of_lines] = line;
-            current->size_of_lines++;
-            return;
-        }
-        prev = current;
-        current = current->next;
-    }
-
-    // Word not found, create a new entry and add it at the end of the list
-    vs_entry_t *new_entry = malloc(sizeof(vs_entry_t));
-    new_entry->value = myStrdup(word); // Ensure word is duplicated correctly
-    new_entry->lines = malloc(sizeof(int)); // Start with one line entry
-    new_entry->lines[0] = line;
-    new_entry->size_of_lines = 1;
-    new_entry->next = NULL;
-
-    // Insert the new entry
-    if (prev == NULL) {
-        // Bucket was empty, insert at head
-        ts->heads[bucket] = new_entry;
-    } else {
-        // Append to the end of the bucket
-        prev->next = new_entry;
-    }
   // TODO:
   // Case head == NULL: bucket hasn't been initialized yet
   // Case word already in list, add to line array.
@@ -137,73 +157,13 @@ void table_string_deallocate(table_string *ts) {
   // Free the linked list of each bucket
   // Free the array of head pointers
   // Free the structure itself
-  for (int i = 0; i < ts->buckets; i++) {
-        vs_entry_t *current = ts->heads[i];
-        while (current != NULL) {
-            vs_entry_t *next = current->next;
-            free(current->value);      // Free the word string
-            free(current->lines);      // Free the lines array
-            free(current);             // Free the entry itself
-            current = next;
-        }
-    }
-    free(ts->heads);  // Free the array of bucket heads
-    free(ts);         // Free the table_string struct
-  //return;
-}
-
-#include <stdlib.h>
-
-// Compare function for qsort to sort alphabetically by value (word)
-int compare_entries(const void *a, const void *b) {
-    vs_entry_t *entryA = *(vs_entry_t **)a;
-    vs_entry_t *entryB = *(vs_entry_t **)b;
-    return myStrCmp(entryA->value, entryB->value);
+  return;
 }
 
 void table_string_print(table_string *ts) {
-    int total_entries = 0;
-    
-    // First, count how many entries we have across all buckets
-    for (int i = 0; i < ts->buckets; i++) {
-        vs_entry_t *current = ts->heads[i];
-        while (current != NULL) {
-            total_entries++;
-            current = current->next;
-        }
-    }
-
-    // Allocate an array to hold pointers to all vs_entry_t elements
-    vs_entry_t **entries = malloc(total_entries * sizeof(vs_entry_t *));
-    if (!entries) {
-        perror("Unable to allocate memory for sorting entries");
-        exit(EXIT_FAILURE);
-    }
-
-    // Collect all entries from the hash table into the array
-    int index = 0;
-    for (int i = 0; i < ts->buckets; i++) {
-        vs_entry_t *current = ts->heads[i];
-        while (current != NULL) {
-            entries[index++] = current;
-            current = current->next;
-        }
-    }
-
-    // Sort the array alphabetically by word (value)
-    //qsort(entries, total_entries, sizeof(vs_entry_t *), compare_entries);
-
-    // Print the sorted entries
-    for (int i = 0; i < total_entries; i++) {
-        vs_entry_t *current = entries[i];
-        printf("%s: ", current->value);
-        for (int j = 0; j < current->size_of_lines; j++) {
-            printf("%d ", current->lines[j]);
-            
-        }
-        printf("\n");
-    }
-
-    // Free the array of entries
-    free(entries);
+  /** TODO:
+   for each bucket
+    for each entry in bucket
+      print entry->word: line line line
+  */
 }

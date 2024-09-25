@@ -25,6 +25,7 @@ void vector_char_push_t(vector_char_t *vc, char c) {
 
 int main(int argc, char **argv) {
   char *source = NULL;
+  //long bufsize;
 
   if (argc != 2) {
     printf("./grade_tokenize.bin [FILE PATH]");
@@ -66,48 +67,5 @@ int main(int argc, char **argv) {
 
   // TODO: Process source[] and count the number of words
   // Print the number of words in the end.
-
- 
-
-
-
-
-  vector_string *dictionary = vector_string_allocate();
-    vector_char_t *token = vector_char_allocate();
-
-    for (int i = 0; source[i] != '\0'; i++) {
-      char c = source[i];
-        if (is_word_char(c)) {
-            vector_char_add(token, c);
-        } else {
-            if (token->len > 0) {
-                vector_char_add(token, '\0'); // Null-terminate the token
-                char *word = vector_char_get_array(token);
-                if (!vector_string_find(dictionary, word)) {
-                    vector_string_insert(dictionary, word);
-                }
-                token->len = 0; // Reset the token length for the next word
-            }
-        }
-    }
-
-    // Handle the last token (if any) after the loop
-    if (token->len > 0) {
-        vector_char_add(token, '\0'); // Null-terminate the last token
-        char *word = vector_char_get_array(token);
-        if (!vector_string_find(dictionary, word)) {
-            vector_string_insert(dictionary, word);
-        }
-    }
-
-    // Print the dictionary
-    vector_string_print(dictionary);
-
-    // Cleanup
-    
-    vector_string_deallocate(dictionary);
-    vector_char_delete(token);
-    free(source);
-
-    return 0;
+  return 0;
 }

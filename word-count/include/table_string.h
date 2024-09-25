@@ -1,8 +1,6 @@
 #ifndef table_string_H
 #define table_string_H
-#ifndef LINE_COUNT
 #define LINE_COUNT
-#endif
 
 #include "vector_string.h"
 #include <stdbool.h>
@@ -51,8 +49,4 @@ void table_string_deallocate(table_string *vs);
  * @param vs
  */
 void table_string_print(table_string *vs);
-int myStrCmp(const char *s1, const char *s2);
-char *myStrdup(const char *s);
-int myStrlen(const char *s);
-void table_string_insert(table_string *ts, char *word);
 #endif
