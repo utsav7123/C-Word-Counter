@@ -48,5 +48,50 @@ int main(int argc, char **argv) {
 
   /** Start processing file and separate into words */
   // TODO: Write linecount
+  int buckets = 4; // Number of buckets (power of 2 for efficient hashing)
+    table_string *ts = table_string_allocate(buckets);
+    char *word = malloc(128 * sizeof(char)); // Allocate a buffer for the current word (adjust size as needed)
+    if (!word) {
+        printf("Memory allocation error");
+        exit(1);
+    }
+
+    int line = 1;  // Start at line 1
+    int word_pos = 0;
+    char c;
+
+    for (int i = 0; source[i] != '\0'; i++) {
+        c = source[i];
+
+        if (isspace(c) || ispunct(c)) {
+            // If the current character is a whitespace or punctuation, the word ends here
+            if (word_pos > 0) {  // If we have a word to process
+                word[word_pos] = '\0';  // Null-terminate the word
+                table_string_insert_or_add(ts, word, line);  // Insert word and line into the table
+                word_pos = 0;  // Reset word position for the next word
+            }
+            if (c == '\n') {
+                line++;  // Increment line number when encountering a newline
+            }
+        } else {
+            // Collect characters for the word
+            word[word_pos++] = c;
+        }
+    }
+
+    // Insert the last word if there is one
+    if (word_pos > 0) {
+        word[word_pos] = '\0';
+        table_string_insert_or_add(ts, word, line);
+    }
+
+    // Print the table of words and their occurrences
+    table_string_print(ts);
+
+    // Deallocate memory
+    free(word);
+    table_string_deallocate(ts);
+    free(source);
+
   return 0;
 }

@@ -24,7 +24,7 @@ typedef struct dedup_entry {
  * @param ts2
  * @param file2
  */
-void subtract(table_string *ts1, char *file1, table_string *ts2);
+void subtract (table_string *tsl, char *filel, table_string *ts2, char *file2);
 
 
 /**

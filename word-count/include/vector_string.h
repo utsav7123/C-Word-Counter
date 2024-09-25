@@ -96,4 +96,5 @@ void vector_string_deallocate(vector_string *vs);
  * @param vs
  */
 void vector_string_print(vector_string *vs);
+int myStrcmp(const char *str1, const char *str2);
 #endif

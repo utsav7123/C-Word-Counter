@@ -5,6 +5,10 @@
 #include <string.h>
 #include <vector_char.h>
 
+int is_valid_char(char ch) {
+    return (ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9');
+}
+
 int main(int argc, char **argv) {
   char *source = NULL;
 
@@ -57,5 +61,28 @@ int main(int argc, char **argv) {
   // check. Free all data.
   // Hint: Use vector_char
 
-  return 0;
+  vector_char_t *word = vector_char_allocate();
+
+    for (int i = 0; source[i] != '\0'; i++) {
+        if (is_valid_char(source[i])) {
+            // Add valid characters to the vector_char
+            vector_char_add(word, source[i]);
+        } else if (word->len > 0) {
+            // If a word is accumulated, terminate it and print it
+            vector_char_add(word, '\0'); // Null terminate the string
+            printf("%s\n", vector_char_get_array(word));
+            word->len = 0; // Reset the vector for the next word
+        }
+    }
+
+    // Handle any leftover word at the end of the source
+    if (word->len > 0) {
+        vector_char_add(word, '\0');
+        printf("%s\n", vector_char_get_array(word));
+    }
+
+    vector_char_delete(word); // Clean up memory
+
+    free(source); // Clean up allocated memory for source
+    return 0;
 }

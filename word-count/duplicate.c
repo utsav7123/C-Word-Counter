@@ -1,16 +1,23 @@
 #include <ctype.h>
-#include <dedup.h>
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <table_string.h>
 #include <vector_char.h>
+#include <vector_string.h>
+int main(int argc, char **argv) {
+  char *source = NULL;
 
-/* Read file into a characater buffer */
-char *readfile(char *filename) {
-  char *source;
-  FILE *fp = fopen(filename, "r");
+  if (argc != 2) {
+    printf("./grade_tokenize.bin [FILE PATH]");
+    exit(1);
+  }
+  /**
+   * @brief Read file into source.
+   * source is a character array with file contents
+   * It is null terminated
+   */
+  FILE *fp = fopen(argv[1], "r");
   if (fp == NULL) { /* Error */
     printf("Error reading file");
     exit(1);
@@ -38,30 +45,8 @@ char *readfile(char *filename) {
     }
   }
   fclose(fp);
-  return source;
-}
 
-int main(int argc, char **argv) {
-  char *source = NULL;
-
-  if (argc != 3) {
-    printf("./dedup.bin [FILE PATH1] [FILE PATH2]");
-    exit(1);
-  }
-  char *source1 = readfile(argv[1]);
-  char *source2 = readfile(argv[2]);
-  /**
-   * @brief Read file into source.
-   * source is a character array with file contents
-   * It is null terminated
-   */
-
-  // argv[1] name of file1
-  // argv[2] name of file2
-  /** Start processing file and separate into words */
-  /** Create Table String 1 with file in argv[1] */
-  /** Create Table string 2 with file in argv[2] */
-  /** Subtract words between ts1 and ts2 */
-  /** Deallocate **/
+  // TODO: Process source[] and count the number of words
+  // Print the number of words in the end.
   return 0;
 }
