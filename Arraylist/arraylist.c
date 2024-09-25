@@ -14,7 +14,14 @@
  */
 void arraylist_add(arraylist *a, void *x)
 {
-    // TODO
+    if (a->length == a->buffer_size)
+    {
+        a->buffer_size *= 2;
+        a->buffer = (void **)realloc(a->buffer, a->buffer_size * sizeof(void *));
+        assert(a->buffer != NULL);
+    }
+    a->buffer[a->length] = x;
+    a->length++;
 }
 
 
@@ -28,6 +35,10 @@ void arraylist_insert(arraylist *a, unsigned int index, void *x)
     // TODO
     // Hint: Consider how you could implement this function in terms of
     // arraylist_add()
+    assert(index <= a->length);
+     arraylist_add(a, x);
+      memmove(&a->buffer[index + 1], &a->buffer[index], (a->length - index - 1) * sizeof(void *));
+      a->buffer[index] = x;
 }
 
 /*
@@ -37,6 +48,8 @@ void arraylist_free(arraylist *a)
 {
     // Hint: How many times is malloc called when creating a new arraylist?
     // TODO
+    free(a->buffer);
+    free(a);cd Arraylist
 }
 
 
