@@ -207,22 +207,3 @@ void table_string_print(table_string *ts) {
     // Free the array of entries
     free(entries);
 }
-
-void table_string_insert(table_string *ts, char *word) {
-    // Create new entry for the word
-    vs_entry_t *new_entry = malloc(sizeof(vs_entry_t));
-    new_entry->value = strdup(word);  // Use strdup to duplicate the word
-    new_entry->next = NULL;
-    
-    // Determine which bucket to place the word into (simple hash function)
-    int bucket_index = (int)(word[0] % ts->buckets);  // Simple mod hashing by first character
-    
-    // Insert the word at the head of the corresponding bucket
-    if (ts->heads[bucket_index] == NULL) {
-        ts->heads[bucket_index] = new_entry;
-    } else {
-        // Insert at the head of the linked list (collision resolution by chaining)
-        new_entry->next = ts->heads[bucket_index];
-        ts->heads[bucket_index] = new_entry;
-    }
-}
